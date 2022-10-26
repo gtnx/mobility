@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import seaborn as sns
 import streamlit as st
 
 from mobility.constants import motifs, moyens, tuus
