@@ -46,6 +46,7 @@ with st.sidebar:
         label="Taille d'unité urbaine", options=[""] + list(tuus["name"]), index=0
     )
     motif = st.selectbox(label="Motif", options=[""] + list(motifs["name"]), index=0)
+    moyen = st.selectbox(label="Moyen", options=[""] + list(moyens["name"]), index=0)
     distance_min = st.slider(
         "Distance min", min_value=0, max_value=100, value=0, step=1
     )
@@ -56,6 +57,8 @@ with st.sidebar:
 predicate = f"(MDISTTOT_fin >= {distance_min}) and (MDISTTOT_fin < {distance_max})"
 if motif:
     df = df.loc[df["MMOTIFDES"] == motif.split(" - ")[0]]
+if moyen:
+    df = df.loc[df["MMOY1S"] == moyen.split(" - ")[0]]
 if region:
     df = df.loc[df["REG_DES"] == region]
 if tuu:
