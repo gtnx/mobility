@@ -4,7 +4,7 @@ import requests
 import streamlit as st
 import zipfile
 
-from mobility.constants import motifs, moyens
+from mobility.constants import motifs, moyens, tuus
 
 __all__ = ("load_data",)
 
@@ -33,4 +33,7 @@ def load_data():
     df["moyen_groupe_1"] = df.merge(
         moyens, left_on="MMOY1S", right_index=True, how="left"
     )["group"]
+    df["tuu2017_orig_label"] = df.merge(tuus, left_on="TUU2017_ORI", right_index=True, how="left")[
+        "name"
+    ]
     return df
