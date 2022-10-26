@@ -8,8 +8,12 @@ from mobility.datasets import load_data
 st.set_page_config(layout="wide")
 
 
-def build_distribution_df(series, digits=3):
-    df = series.sort_values("count", ascending=False)
+def build_distribution_df(series, digits=3, sort_index=False):
+    df = (
+        series.sort_index()
+        if sort_index
+        else series.sort_values("count", ascending=False)
+    )
     df["ratio"] = df["count"] / df["count"].sum()
     df["cumratio"] = df["ratio"].cumsum()
     df["vitesse"] = df.eval("distance / durée * 60")
@@ -82,15 +86,22 @@ aggs = {"IDENT_DEP": "count", "DUREE": "mean", "MDISTTOT_fin": "mean"}
 columns = {"IDENT_DEP": "count", "DUREE": "durée", "MDISTTOT_fin": "distance"}
 
 groups = [
-    ("moyen_groupe_1", "Distribution des déplacements par famille de moyens"),
-    ("moyen_1", "Distribution des déplacements par moyen"),
-    ("REG_DES", "Distribution des déplacements par région"),
-    ("tuu2017_orig_label", "Distribution des déplacements par taille d'unité urbaine"),
-    ("motif_deplacement", "Distribution des déplacements par motif")
+    ("moyen_groupe_1", "Distribution des déplacements par famille de moyens", False),
+    ("moyen_1", "Distribution des déplacements par moyen", False),
+    ("REG_DES", "Distribution des déplacements par région", False),
+    (
+        "tuu2017_orig_label",
+        "Distribution des déplacements par taille d'unité urbaine",
+        True,
+    ),
+    ("motif_deplacement", "Distribution des déplacements par motif", False),
+    ("distance_bin", "Distribution des déplacements par distance", True),
 ]
-for key, subheader in groups:
+for key, subheader, sort_index in groups:
     st.subheader(subheader)
     st.dataframe(
-        build_distribution_df(df.groupby(key).agg(aggs).rename(columns=columns)),
+        build_distribution_df(
+            df.groupby(key).agg(aggs).rename(columns=columns), sort_index=sort_index
+        ),
         use_container_width=True,
     )
